@@ -6,14 +6,14 @@ export const Context = React.createContext();
 export const Consumer = Context.Consumer;
 export const Provider = (props) => {
   const { data } = new Data();
-
+  const cookie = new Cookie();
   const [ authenticatedUser, setAuthenticatedUser ] =
     useState(
-      Cookies.get("authenticatedUser") || null
+      cookies.get("authenticatedUser") || null
     );
   const [ userPassword, setUserPassword ] = 
     useState(
-      Cookies.get("credentials") || null
+      cookies.get("credentials") || null
     );
   
   const signIn = async (emailAddress, password) => {
@@ -27,12 +27,12 @@ export const Provider = (props) => {
       setUserPassword(password);
     }
 
-    Cookies.set(
+    cookies.set(
       "authenticatedUser",
       user,
       { path: "/" }
     );
-    Cookies.set(
+    cookies.set(
       "credentials",
       password,
       { path: "/" }
@@ -45,11 +45,11 @@ export const Provider = (props) => {
     setAuthenticatedUser(null);
     setUserPassword(null);
     
-    Cookies.remove(
+    cookies.remove(
       "authenticatedUser",
       { path: "/" }
     );
-    Cookies.remove(
+    cookies.remove(
       "credentials",
       { path: "/" }
     );
