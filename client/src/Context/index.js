@@ -1,34 +1,38 @@
 import React, { useState } from "react";
-import Cookies from "universal-cookie";
 import Data from "../Data/Data";
+// import Cookies from "js-cookie";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
+/**
+ * This file sets up the Context to allow data to pass
+ * through the app component tree.
+ */
+export const Context = React.createContext();
 
-export const Context = React.createContext(); 
-export const Consumer = Context.Consumer;
 export const Provider = (props) => {
-  const { data } = new Data();
-  const cookies = new Cookies();
-  const [ authenticatedUser, setAuthenticatedUser ] =
-    useState(
-      cookies.get("authenticatedUser") || null
-    );
-  const [ userPassword, setUserPassword ] = 
-    useState(
-      cookies.get("credentials") || null
-    );
-  
+  const data = new Data();
+  // const cookies = Cookies.get("authenticatedUser");
+  const [ authenticatedUser, setAuthUser ] = useState(
+    cookies.get("authenticatedUser") || null
+  );
+  const [ userPassword, setUserPassword ] = useState(
+    cookies.get("credentials") || null
+  );
+
   const signIn = async (emailAddress, password) => {
     const user = await data.getUser(
-      emailAddress,
+      emailAddress, 
       password
     );
-
+    
     if (user !== null) {
-      setAuthenticatedUser(user);
+      console.log(user);
+      setAuthUser(user);
       setUserPassword(password);
     }
 
     cookies.set(
-      "authenticatedUser",
+      "authenticatedUser", 
       user,
       { path: "/" }
     );
@@ -37,14 +41,12 @@ export const Provider = (props) => {
       password,
       { path: "/" }
     );
-
     return user;
-  }
+  };
 
   const signOut = () => {
-    setAuthenticatedUser(null);
+    setAuthUser(null);
     setUserPassword(null);
-    
     cookies.remove(
       "authenticatedUser",
       { path: "/" }
@@ -52,22 +54,20 @@ export const Provider = (props) => {
     cookies.remove(
       "credentials",
       { path: "/" }
-    );
-  }
-
-  const value = {
-    authenticatedUser,
-    userPassword,
-    data,
-    actions: {
-      signIn,
-      signOut
-    }
+    )
   };
 
   return (
-    <Context.Provider value={value}>
+    <Context.Provider value={{ 
+      authenticatedUser,
+      userPassword,
+      data,
+      actions: { 
+        signIn, 
+        signOut 
+      }
+    }}>
       {props.children}
     </Context.Provider>
   );
-};
+}
