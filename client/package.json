@@ -6,7 +6,6 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "js-cookie": "^3.0.0",
     "prop-types": "^15.7.2",
     "react-markdown": "^7.0.0",
     "react": "^17.0.2",

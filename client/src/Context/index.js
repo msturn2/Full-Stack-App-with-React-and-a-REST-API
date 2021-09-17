@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import Data from "../Data/Data";
-// import Cookies from "js-cookie";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 /**
- * This file sets up the Context to allow data to pass
- * through the app component tree.
+ * This file sets up the Context to allow data to
+ * pass through the app component tree.
  */
 export const Context = React.createContext();
 
 export const Provider = (props) => {
   const data = new Data();
-  // const cookies = Cookies.get("authenticatedUser");
   const [ authenticatedUser, setAuthUser ] = useState(
     cookies.get("authenticatedUser") || null
   );
