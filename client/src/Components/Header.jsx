@@ -13,29 +13,25 @@ export default function Header() {
         </h1>
         <nav>
           {
-            authenticatedUser 
-            ? <React.Fragment>
-                <ul className="header--signedout">
-                  <li>
-                    Welcome, {authenticatedUser[0].firstName}!
-                  </li>
-                  <li>
-                    <Link to="/signout">
-                      Sign Out
-                    </Link>
-                  </li>
-                </ul>
-              </React.Fragment> 
-            : <React.Fragment>
-                <ul className="header--signedout">
-                  <li>
-                    <Link to="/signup">Sign Up</Link>
-                  </li>
-                  <li>
-                    <Link to="/signin">Sign In</Link>
-                  </li>
-                </ul>
-              </React.Fragment>
+            authenticatedUser
+            ? <ul className="header--signedout">
+                <li>
+                  Welcome, {authenticatedUser[0].firstName}!
+                </li>
+                <li>
+                  <Link to="/signout">
+                    Sign Out
+                  </Link>
+                </li>
+              </ul>
+            : <ul className="header--signedout">
+                <li>
+                  <Link to="/signup">Sign Up</Link>
+                </li>
+                <li>
+                  <Link to="/signin">Sign In</Link>
+                </li>
+              </ul>
           }
         </nav>
       </div>

@@ -13,7 +13,9 @@ export default function Courses() {
 
   // get courses
   useEffect(() => {
-    data.getCourses()
+    const abortCont = new AbortController();
+
+    data.getCourses({ signal: abortCont.signal })
       .then((response) => {
         setCourses(response);
       })
@@ -21,6 +23,8 @@ export default function Courses() {
         history.push("/error");
         console.log(error);
       });
+      
+    return () => abortCont.abort();
   }, [ data, history ]);
 
   return (

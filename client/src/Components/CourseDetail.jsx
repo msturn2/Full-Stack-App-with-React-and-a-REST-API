@@ -21,7 +21,7 @@ export default function CourseDetail() {
   const [ course, setCourse ] = useState({});
   const [ user, setUser ] = useState({});
   const [ isSignedIn, setIsSignedIn ] = useState(false);
-  const [ userId, setUserId ] = useState();
+  const [ userId ] = useState();
   const { id } = useParams();
   const history = useHistory();
 
@@ -29,7 +29,6 @@ export default function CourseDetail() {
   useEffect(() => {
     if (authenticatedUser) {
       setIsSignedIn(true);
-      setUserId(authenticatedUser[0].id);
     }
 
     //gets course detail
@@ -48,8 +47,7 @@ export default function CourseDetail() {
     id, 
     history, 
     authenticatedUser, 
-    isSignedIn, 
-    userId, 
+    isSignedIn,
     user.id
   ]);
 
@@ -70,6 +68,9 @@ export default function CourseDetail() {
       });
   };
 
+  console.log(user.id);
+  console.log(course.userId);
+  console.log(isSignedIn);
   return (
     <main>
       <div className="actions--bar">
@@ -77,7 +78,7 @@ export default function CourseDetail() {
           {/* if user is the owner of course, render 
           buttons for deleting and updating*/}
           {
-            isSignedIn && userId === user.id 
+            isSignedIn && course.userId === user.id 
             ? <>
                 <Link 
                   className="button" 
