@@ -20,5 +20,4 @@ In addition, the project requires users to create an account and sign in to make
 - Sqlite, Sequelize, Sequelize CLI
 - REACT, React Router, Create React App tool
 - JSX
-- Axios
 - Basic Authentication
