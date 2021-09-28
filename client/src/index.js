@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import "./styles/reset.css";
-import "./styles/global.css";
+import './styles/reset.css';
+import './styles/global.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Provider } from "./Context";
+//wrap app in Provider from Context
+import { Provider } from './Context';
 
 ReactDOM.render(
   <React.StrictMode>

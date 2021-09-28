@@ -22,7 +22,9 @@ export default class Data {
     }
 
     if (requiresAuth) {
-      const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
+      const encodedCredentials = btoa(
+        `${credentials.username}:${credentials.password}`
+      );
       options.headers['Authorization'] = `Basic ${encodedCredentials}`;
     }
 
@@ -66,17 +68,18 @@ export default class Data {
     }
   }
 
-  async getAllCourses() {
+  async getCourses() {
     const response = await this.api(
       "/courses", 
-      "GET", 
-      null
+      "GET"
     );
 
     if (response.status === 200) {
       return response.json()
         .then((data) => data)
         .catch((error) => console.log(error));
+    } else if (response.status === 400) {
+      return null;
     } else {
       throw new Error();
     };
@@ -85,16 +88,18 @@ export default class Data {
   async getCourse(id) {
     const response = await this.api(
       `/courses/${id}`, 
-      "GET",
-      null
+      "GET"
     );
 
     if (response.status === 200) {
       return response.json()
         .then((data) => data)
         .catch((error) => console.log(error));
-    } else if (response.status === 404) {
-      return null;
+    } else if (response.status === 400) {
+      return response.json()
+        .then((data) => {
+          return null;
+        });
     } else {
       throw new Error();
     };
@@ -114,7 +119,7 @@ export default class Data {
     );
 
     if (response.status === 201) {
-      return [];
+      return null;
     } else if (response.status === 400) {
       return response.json()
         .then((data) => {
@@ -127,20 +132,20 @@ export default class Data {
 
   async updateCourse(
     id, 
-    course, 
+    data, 
     username, 
     password
   ) {
     const response = await this.api(
       `/courses/${id}`, 
       "PUT", 
-      course, 
+      data, 
       true, 
       { username, password }
     );
 
     if (response.status === 204) {
-      return [];
+      return response.status;
     } else if (response.status === 400) {
       return response.json()
         .then((data) => {
@@ -169,11 +174,6 @@ export default class Data {
       return null;
     } else if (response.status === 403) {
       return null;
-      // return response.json()
-      //   .then((data) => {
-      //     return data.errors;
-      //   })
-      //   .catch((error) => console.log(error));
     } else {
       throw new Error();
     };

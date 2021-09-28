@@ -1,55 +1,37 @@
-const { Model } = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 const bcrypt = require("bcryptjs");
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-      User.hasMany(models.Course, {
-        as: "userInfo", //alias
-        foreignKey: {
-          fieldName: "userId",
-          allowNull: false,
-        },
-      });
-    }
-  }
+  class User extends Model {}
   User.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: "Please enter the user's First Name"
+            msg: "A first name is required"
           },
           notEmpty: {
             msg: "Please enter the user's First Name"
-          }
-        }
+          },
+        },
       },
+
       lastName: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
           notNull: {
-            msg: "Please enter the user's Last Name"
+            msg: "A last name is required"
           },
           notEmpty: {
             msg: "Please enter the user's Last Name"
-          }
-        }
+          },
+        },
       },
+
       emailAddress: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -62,16 +44,13 @@ module.exports = (sequelize, DataTypes) => {
           },
           isEmail: {
             msg: "Please provide a valid email address"
-          }
-        }
+          },
+        },
       },
+
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        set(val) {
-          const hashedPassword = bcrypt.hashSync(val, 10);
-          this.setDataValue("password", hashedPassword);
-        },
         validate: {
           notNull: {
             msg: "A password is required"
@@ -79,18 +58,59 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: {
             msg: "Please provide a password"
           },
-          // len: {
-          //   args: [8,20],
-          //   msg: "The password must be between 8 - 20 characters in length"
-          // }
-        }
-      }
+        },
+      },
+
+      confirmPassword: {
+        type: DataTypes.VIRTUAL,
+        allowNull: false,
+        validate: {
+          customValidator(val) {
+            if (val !== this.password) {
+              console.log(this.password);
+              throw new Error(`The passwords do not match`);
+            } else {
+              return null;
+            }
+          },
+          notNull: {
+            msg: "Please Confirm Password",
+          },
+          notEmpty: {
+            msg: "Please Confirm Password",
+          },
+        },
+      },
     },
     {
       // options
       sequelize,
-      modelName: "User"
+      modelName: "User",
+      hooks: {
+        afterValidate: function(user) {
+          if (
+            user.password 
+            === user.confirmPassword
+          ) {
+            console.log("theres matching");
+            const salt = bcrypt.genSaltSync(10, "a");
+            user.password = bcrypt.hashSync(
+              user.password, 
+              salt
+            );
+          }
+        },
+      },
     }
   );
+
+  User.associate = (models) => {
+    User.hasMany(models.Course, {
+      as: "userInfo",
+      foreignKey: {
+        fieldName: "userId",
+      },
+    });
+  };
   return User;
 };

@@ -1,71 +1,74 @@
-import React, { useState } from "react";
-import Data from "../Data/Data";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
-/**
- * This file sets up the Context to allow data to
- * pass through the app component tree.
- */
+/* eslint-disable import/no-anonymous-default-export */
+import React, { useState } from 'react';
+import Cookies from 'js-cookie';
+import Data from '../Data/Data';
+
 export const Context = React.createContext();
 
 export const Provider = (props) => {
   const data = new Data();
-  const [ authenticatedUser, setAuthUser ] = useState(
-    cookies.get("authenticatedUser") || null
+
+  //state variables.
+  const [authenticatedUser, setAuthenticatedUser] = useState(
+    Cookies.get('authenticatedUser') || null
   );
-  const [ userPassword, setUserPassword ] = useState(
-    cookies.get("credentials") || null
+  const [userPassword, setUserPassword] = useState(
+    Cookies.get('userPassword') || null
   );
 
+  //signin function
   const signIn = async (emailAddress, password) => {
-    const user = await data.getUser(
-      emailAddress, 
-      password
-    );
-    
+    const user = await data.getUser(emailAddress, password);
+    //test log user
+    // console.log(user);
     if (user !== null) {
-      console.log(user);
-      setAuthUser(user);
+      setAuthenticatedUser(user);
       setUserPassword(password);
-    }
 
-    cookies.set(
-      "authenticatedUser", 
-      user,
-      { path: "/" }
-    );
-    cookies.set(
-      "credentials",
-      password,
-      { path: "/" }
-    );
+      Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
+      Cookies.set('userPassword', JSON.stringify(password), { expires: 1 });
+    }
     return user;
   };
 
+  //sign out function
   const signOut = () => {
-    setAuthUser(null);
+    setAuthenticatedUser(null);
     setUserPassword(null);
-    cookies.remove(
-      "authenticatedUser",
-      { path: "/" }
-    );
-    cookies.remove(
-      "credentials",
-      { path: "/" }
-    )
+    Cookies.remove('authenticatedUser');
+    Cookies.remove('userPassword');
   };
 
-  return (
-    <Context.Provider value={{ 
-      authenticatedUser,
-      userPassword,
-      data,
-      actions: { 
-        signIn, 
-        signOut 
-      }
-    }}>
-      {props.children}
-    </Context.Provider>
-  );
+  //passing state and functions for use through context
+  const value = {
+    authenticatedUser,
+    data,
+    userPassword,
+    actions: {
+      signIn: signIn,
+      signOut: signOut,
+    },
+  };
+
+  return <Context.Provider value={value}>{props.children}</Context.Provider>;
+};
+
+export const Consumer = Context.Consumer;
+
+/**
+ * A higher-order component that wraps the provided component in a Context Consumer component.
+ * @param {class} Component - A React component.
+ * @returns {function} A higher-order component.
+ */
+
+export function withContext(Component) {
+  return function ContextComponent(props) {
+    return (
+      <Context.Consumer>
+        {(context) => <Component {...props} context={context} />}
+      </Context.Consumer>
+    );
+  };
 }
+
+export default { withContext, Context };
