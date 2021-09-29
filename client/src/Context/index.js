@@ -7,13 +7,14 @@ export const Context = React.createContext();
 
 export const Provider = (props) => {
   const data = new Data();
-
+  
   //state variables.
-  const [authenticatedUser, setAuthenticatedUser] = useState(
-    Cookies.get('authenticatedUser') || null
+  let [ authenticatedUser, setAuthenticatedUser ] = useState(
+    Cookies.get("authenticatedUser") || null
   );
-  const [userPassword, setUserPassword] = useState(
-    Cookies.get('userPassword') || null
+
+  let [ userPassword, setUserPassword ] = useState(
+    Cookies.get("userPassword") || null
   );
 
   //signin function
