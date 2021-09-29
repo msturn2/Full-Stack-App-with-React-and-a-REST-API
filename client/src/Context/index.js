@@ -1,7 +1,8 @@
-/* eslint-disable import/no-anonymous-default-export */
-import React, { useState } from 'react';
-import Cookies from 'js-cookie';
-import Data from '../Data/Data';
+import React, { useState } from "react";
+import Cookies from "universal-cookie";
+import Data from "../Data/Data";
+
+const cookies = new Cookies();
 
 export const Context = React.createContext();
 
@@ -9,26 +10,25 @@ export const Provider = (props) => {
   const data = new Data();
   
   //state variables.
-  let [ authenticatedUser, setAuthenticatedUser ] = useState(
-    Cookies.get("authenticatedUser") || null
+  const [ authenticatedUser, setAuthenticatedUser ] = useState(
+    cookies.get("authenticatedUser") || null
   );
 
-  let [ userPassword, setUserPassword ] = useState(
-    Cookies.get("userPassword") || null
+  const [ userPassword, setUserPassword ] = useState(
+    cookies.get("userPassword") || null
   );
 
   //signin function
   const signIn = async (emailAddress, password) => {
     const user = await data.getUser(emailAddress, password);
-    //test log user
-    // console.log(user);
+
     if (user !== null) {
       setAuthenticatedUser(user);
       setUserPassword(password);
-
-      Cookies.set('authenticatedUser', JSON.stringify(user), { expires: 1 });
-      Cookies.set('userPassword', JSON.stringify(password), { expires: 1 });
     }
+
+    cookies.set("authenticatedUser", user, { path: "/" });
+    cookies.set("userPassword", password, { path: "/" });
     return user;
   };
 
@@ -36,8 +36,8 @@ export const Provider = (props) => {
   const signOut = () => {
     setAuthenticatedUser(null);
     setUserPassword(null);
-    Cookies.remove('authenticatedUser');
-    Cookies.remove('userPassword');
+    cookies.remove("authenticatedUser", { path: "/" });
+    cookies.remove("userPassword", { path: "/" });
   };
 
   //passing state and functions for use through context
