@@ -71,15 +71,14 @@ export default class Data {
   async getCourses() {
     const response = await this.api(
       "/courses", 
-      "GET"
+      "GET",
+      null
     );
 
     if (response.status === 200) {
       return response.json()
         .then((data) => data)
         .catch((error) => console.log(error));
-    } else if (response.status === 400) {
-      return null;
     } else {
       throw new Error();
     };
@@ -95,11 +94,8 @@ export default class Data {
       return response.json()
         .then((data) => data)
         .catch((error) => console.log(error));
-    } else if (response.status === 400) {
-      return response.json()
-        .then((data) => {
-          return null;
-        });
+    } else if (response.status === 404) {
+      return null;
     } else {
       throw new Error();
     };

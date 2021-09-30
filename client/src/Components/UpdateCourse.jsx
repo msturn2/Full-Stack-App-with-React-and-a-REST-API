@@ -27,28 +27,25 @@ export default function UpdateCourse() {
   const history = useHistory();
 
   useEffect(() => {
-    async function fetchData() {
-      await data.getCourse(id)
-        .then((response) => {
-          if (response) {
-            if (response.userId === userId) {
-              setIsLoading(false);
-              setCourse(response);
-              setTitle(response.title);
-              setDescription(response.description);
-              setTime(response.estimatedTime);
-              setMaterials(response.materialsNeeded);
-              setAuthUser(response.userInfo);
-            } else {
-              history.push("/forbidden");
-            }
+    data.getCourse(id)
+      .then((response) => {
+        if (response) {
+          if (response.userId === userId) {
+            setIsLoading(false);
+            setCourse(response);
+            setTitle(response.title);
+            setDescription(response.description);
+            setTime(response.estimatedTime);
+            setMaterials(response.materialsNeeded);
+            setAuthUser(response.userInfo);
           } else {
-            history.push("/notfound");
+            history.push("/forbidden");
           }
-        })
-        .catch(() => history.push("/error"));
-    }
-    fetchData();
+        } else {
+          history.push("/notfound");
+        }
+      })
+      .catch(() => history.push("/error"));
   }, [ data, id, history, authUser.id, userId ]);
 
   const handleValueChange = (e) => {
@@ -81,11 +78,11 @@ export default function UpdateCourse() {
       user,
       pass
     )
-      .then((response) => {
-        if (response.errors) {
-          setErrors(response.errors);
-          console.log(response.errors);
-        } else {
+      .then((errors) => {
+        if (errors.length) {
+          setErrors(errors);
+          console.log(errors);
+        } else if (!errors.length) {
           history.push(`/courses/${id}`);
           console.log(`Course "${course.title}" has been updated`);
         }
@@ -132,7 +129,7 @@ export default function UpdateCourse() {
                       ))}
                     </ul>
                   </div>
-                : null  
+                : null
               }
             </div>
             <p></p>

@@ -53,9 +53,11 @@ export default function CreateCourse() {
       user, 
       pass
     )
-      .then((response) => {
-        if (response) {
-          setValidationErrors(response.errors);
+      .then((errors) => {
+        if (errors) {
+          if (errors.length) {
+            setValidationErrors(errors);
+          }
         } else {
           data.getCourses()
             .then((courses) => {
@@ -91,7 +93,9 @@ export default function CreateCourse() {
           </p>
           {
             validationErrors.length
-            ? <div className="validation--errors">
+            ? <div 
+                className="validation--errors"
+              >
                 <h3>Validation Errors</h3>
                 <ul>
                   {validationErrors.map((error) => (

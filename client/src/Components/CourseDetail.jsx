@@ -20,24 +20,23 @@ export default function CourseDetail() {
 
   const [ course, setCourse ] = useState({});
   const [ user, setUser ] = useState({});
-  const [ isSignedIn, setIsSignedIn ] = useState(false);
+  // const [ isSignedIn, setIsSignedIn ] = useState(false);
   const { id } = useParams();
   const history = useHistory();
 
   // sets authorized user
   useEffect(() => {
-    if (authenticatedUser) {
-      setIsSignedIn(true);
-    }
-
     //gets course detail
     data.getCourse(id)
       .then((response) => {
         if (response) {
           setCourse(response);
           setUser(response.userInfo);
-        } else {
+        } else if (!course.id) {
+          // if course.id doesn't exist, redirects to
+          // NotFound Component
           history.push("/notfound");
+          console.log("Im sorry, but the course you're looking for doesn't exist.");
         }
       })
       .catch(() => history.push("/error"));
@@ -45,9 +44,7 @@ export default function CourseDetail() {
     data, 
     id, 
     history, 
-    authenticatedUser, 
-    isSignedIn,
-    user.id
+    authenticatedUser
   ]);
 
   // handle course deletion
@@ -74,7 +71,9 @@ export default function CourseDetail() {
           {/* if user is the owner of course, render 
           buttons for deleting and updating*/}
           {
-            isSignedIn && authenticatedUser[0].id === course.userId
+            authenticatedUser 
+            && authenticatedUser[0].id 
+            === course.userId
             ? <>
                 <Link 
                   className="button" 
