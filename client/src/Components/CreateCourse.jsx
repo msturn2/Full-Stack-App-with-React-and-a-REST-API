@@ -180,12 +180,28 @@ export default function CreateCourse() {
       {
         showModal 
         ? <Modal>
-            <h1>Congratulations on creating your New Course!</h1>
-            <button onClick={() => {
-              history.push(`/courses/${newCourseId}`)
+            <h1>
+              Congratulations on creating your New Course!
+            </h1>
+            <p style={{ 
+              marginTop: "0.5rem",
+              marginLeft: "0.6rem" 
             }}>
-              Check it out
-            </button>
+              <button 
+                className="button"
+                onClick={() => {
+                  history.push(`/courses/${newCourseId}`)
+                }}
+              >
+                Check it out
+              </button>
+              <button 
+                className="button button-secondary"
+                onClick={handleCancel}
+              >
+                To Courses
+              </button>
+            </p>
           </Modal>
         : null
       }
