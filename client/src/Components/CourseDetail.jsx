@@ -20,7 +20,6 @@ export default function CourseDetail() {
 
   const [ course, setCourse ] = useState({});
   const [ user, setUser ] = useState({});
-  // const [ isSignedIn, setIsSignedIn ] = useState(false);
   const { id } = useParams();
   const history = useHistory();
 
@@ -44,7 +43,8 @@ export default function CourseDetail() {
     data, 
     id, 
     history, 
-    authenticatedUser
+    authenticatedUser,
+    course
   ]);
 
   // handle course deletion
