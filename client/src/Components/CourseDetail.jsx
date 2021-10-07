@@ -1,7 +1,8 @@
 import React, { 
   useContext, 
-  useEffect, 
-  useState 
+  useEffect,
+  useState,
+  Redirect 
 } from "react";
 import { 
   Link, 
@@ -13,38 +14,55 @@ import ReactMarkdown from "react-markdown";
 
 export default function CourseDetail() {
   const { 
-    data, 
+    data,
     authenticatedUser, 
     userPassword 
   } = useContext(Context);
 
-  const [ course, setCourse ] = useState({});
+  const [ course, setCourse ] = useState([]);
   const [ user, setUser ] = useState({});
   const { id } = useParams();
   const history = useHistory();
+  let getID = window.location.pathname.replace("/courses/","");
 
   // sets authorized user
   useEffect(() => {
     //gets course detail
-    data.getCourse(id)
-      .then((response) => {
-        if (response) {
-          setCourse(response);
-          setUser(response.userInfo);
-        } else if (!course.id) {
-          // if course.id doesn't exist, redirects to
-          // NotFound Component
+    fetch(`http://localhost:5000/api/courses/${getID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          setCourse(data);
+        } else {
           history.push("/notfound");
-          console.log("Im sorry, but the course you're looking for doesn't exist.");
         }
       })
-      .catch(() => history.push("/error"));
+      .catch((error) => {
+        history.push("/error");
+        console.log(error);
+      });
   }, [
-    data, 
-    id, 
-    history, 
-    authenticatedUser,
-    course
+    getID, 
+    history
+  ]);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/courses/${getID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.userInfo) {
+          history.push("/notfound");
+        } else {
+          setUser(data.userInfo);
+        }
+      })
+      .catch((error) => {
+        history.push("/error");
+        console.log(error);
+      });
+  }, [ 
+    getID,
+    history 
   ]);
 
   // handle course deletion

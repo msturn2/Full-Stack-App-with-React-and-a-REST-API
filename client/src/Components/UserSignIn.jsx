@@ -30,16 +30,13 @@ export default function UserSignIn() {
         emailAddress,
         password
       )
-        .then((response) => {
-          if (!response) {
+        .then((user) => {
+          if (user === null) {
             setErrors("Sign In was unsuccessful");
           } else {
-            if (!location.state) {
-              history.goBack();
-            } else {
-              history.push(from);
-              return null;
-            }
+            history.push(from);
+            console.log(`SUCCESS! ${emailAddress} is now signed in.`)
+            return null;
           }
         })
         .catch((error) => {
