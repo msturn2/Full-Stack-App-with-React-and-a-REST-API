@@ -98,8 +98,8 @@ export default function CreateCourse() {
               >
                 <h3>Validation Errors</h3>
                 <ul>
-                  {validationErrors.map((error) => (
-                    <li>{ error }</li>
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{ error }</li>
                   ))}
                 </ul>
               </div>
